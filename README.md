@@ -1,0 +1,2 @@
+# Travel-Logger
+In these travel logger having functionalities with using the web based app easily client mark there travel locations with using a world map in a attractive way and the check daily basis travel routine using travel logger &amp; mark there name , rating , images etc .. store in the Databases cloud and they easily access all the information in travel logger , So there is all scenario of travel logger these app having all modern technologies 
