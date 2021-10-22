@@ -4,10 +4,13 @@ const dotenv = require("dotenv");
 const pinRouter = require("./routes/pin");
 const userRouter = require("./routes/user");
 const middlewares = require("./middlewares/not-found");
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
+app.use(express.static(__dirname +"./uploads/"));
+app.use(cors());
 
 const PORT = 8000;
 

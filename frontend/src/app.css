@@ -1,6 +1,6 @@
 .card {
-  width: 250px;
-  height: 250px;
+  width: 300px;
+  height: 450px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -29,10 +29,14 @@ label {
 .date {
   font-size: 12px;
 }
+.image {
+  height: 200px;
+  width: 300px;
+}
 
 form {
-  width: 250px;
-  height: 250px;
+  width: 350px;
+  height: 350px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -86,19 +90,19 @@ textarea {
   cursor: pointer;
 }
 
-.button:focus{
+.button:focus {
   outline: none;
 }
 
-.logout{
+.logout {
   background-color: tomato;
 }
 
-.login{
+.login {
   background-color: rgb(9, 150, 21);
   margin-right: 10px;
 }
 
-.register{
+.register {
   background-color: rgb(9, 150, 21);
 }

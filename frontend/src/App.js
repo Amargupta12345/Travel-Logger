@@ -1,12 +1,12 @@
 import "./app.css";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import { useEffect, useState } from "react";
-import { Room, Star } from "@material-ui/icons";
+import { Room, Star, StarBorder } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import { REACT_APP_MAPBOX } from ".constant";
+import { REACT_APP_MAPBOX } from "./constant";
 
 function App() {
   const myStorage = window.localStorage;
@@ -18,11 +18,13 @@ function App() {
   const [newPlace, setNewPlace] = useState(null);
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
+  const [image, setImage] = useState(null);
+  // const [loading, setLoading] = useState(false);
   const [star, setStar] = useState(0);
   const [viewport, setViewport] = useState({
-    latitude: 20.5937,
-    longitude: 78.9629,
-    zoom: 3,
+    latitude: 47.040182,
+    longitude: 17.071727,
+    zoom: 4,
   });
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -40,6 +42,8 @@ function App() {
     });
   };
 
+  // data normal
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
@@ -49,6 +53,7 @@ function App() {
       rating: star,
       lat: newPlace.lat,
       long: newPlace.long,
+      image,
     };
 
     try {
@@ -60,15 +65,33 @@ function App() {
     }
   };
 
-  const getPins = async () => {
-    try {
-      const allPins = await axios.get("/pins");
-      setPins(allPins.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const handleSubmit = async (e) => {
+
+  //   var formData = new FormData();
+
+  //   formData.append("title", title);
+  //   formData.append("desc", desc); // number 123456 is immediately converted to a string "123456"
+  //   formData.append("rating", star); // number 123456 is immediately converted to a string "123456"
+  //   formData.append("file", image); // number 123456 is immediately converted to a string "123456"
+  //   console.log(formData);
+  //   try {
+  //     const res = await axios.post("/pins/upload", formData);
+  //     setPins([...pins, res.data]);
+  //     setNewPlace(null);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
   useEffect(() => {
+    const getPins = async () => {
+      try {
+        const allPins = await axios.get("/pins");
+        setPins(allPins.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
     getPins();
   }, []);
 
@@ -119,6 +142,8 @@ function App() {
                   <h4 className="place">{p.title}</h4>
                   <label>Review</label>
                   <p className="desc">{p.desc}</p>
+                  <label>Image</label>
+                  <img src={p.image} alt="loading" className="image" />
                   <label>Rating</label>
                   <div className="stars">
                     {Array(p.rating).fill(<Star className="star" />)}
@@ -156,26 +181,31 @@ function App() {
               onClose={() => setNewPlace(null)}
               anchor="left">
               <div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <label>Title</label>
                   <input
                     placeholder="Enter a title"
                     autoFocus
+                    name="title"
                     onChange={(e) => setTitle(e.target.value)}
                   />
-                  <label>Image</label>
-                  <input
-                    placeholder="Enter a title"
-                    autoFocus
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
+
                   <label>Description</label>
                   <textarea
                     placeholder="Say us something about this place."
                     onChange={(e) => setDesc(e.target.value)}
+                    name="desc"
+                  />
+                  <label>Add A Image Url Address</label>
+                  <textarea
+                    placeholder="Image Link"
+                    onChange={(e) => setImage(e.target.value)}
+                    name="desc"
                   />
                   <label>Rating</label>
-                  <select onChange={(e) => setStar(e.target.value)}>
+                  <select
+                    onChange={(e) => setStar(e.target.value)}
+                    name="rating">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
