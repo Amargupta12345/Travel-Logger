@@ -1,15 +1,15 @@
-import "./app.css";
+import "./travellog.css";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import { useEffect, useState } from "react";
 import { Room, Star, StarBorder } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
-import Register from "./components/Register";
-import Login from "./components/Login";
+import Register from "./Register";
+import Login from "./Login";
 
-import { REACT_APP_MAPBOX, REACT_MAP_URL } from "./constant";
+import { REACT_APP_MAPBOX, REACT_MAP_URL } from "../constant";
 
-function App() {
+function Travellogger() {
   const myStorage = window.localStorage;
   const [currentUsername, setCurrentUsername] = useState(
     myStorage.getItem("user")
@@ -263,4 +263,4 @@ function App() {
   );
 }
 
-export default App;
+export default Travellogger;
