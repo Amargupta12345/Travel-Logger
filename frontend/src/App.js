@@ -6,7 +6,9 @@ import axios from "axios";
 import { format } from "timeago.js";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import { REACT_APP_MAPBOX } from "./constant";
+
+import { REACT_APP_MAPBOX, REACT_MAP_URL } from "./constant";
+import Travel from "./components/Travel";
 
 function App() {
   const myStorage = window.localStorage;
@@ -19,7 +21,6 @@ function App() {
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
   const [image, setImage] = useState(null);
-  // const [loading, setLoading] = useState(false);
   const [star, setStar] = useState(0);
   const [viewport, setViewport] = useState({
     latitude: 47.040182,
@@ -44,44 +45,50 @@ function App() {
 
   // data normal
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newPin = {
-      username: currentUsername,
-      title,
-      desc,
-      rating: star,
-      lat: newPlace.lat,
-      long: newPlace.long,
-      image,
-    };
-
-    try {
-      const res = await axios.post("/pins", newPin);
-      setPins([...pins, res.data]);
-      setNewPlace(null);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const newPin = {
+  //     username: currentUsername,
+  //     title,
+  //     desc,
+  //     rating: star,
+  //     lat: newPlace.lat,
+  //     long: newPlace.long,
+  //     image,
+  //   };
 
-  //   var formData = new FormData();
-
-  //   formData.append("title", title);
-  //   formData.append("desc", desc); // number 123456 is immediately converted to a string "123456"
-  //   formData.append("rating", star); // number 123456 is immediately converted to a string "123456"
-  //   formData.append("file", image); // number 123456 is immediately converted to a string "123456"
-  //   console.log(formData);
   //   try {
-  //     const res = await axios.post("/pins/upload", formData);
+  //     const res = await axios.post("/pins", newPin);
   //     setPins([...pins, res.data]);
   //     setNewPlace(null);
   //   } catch (err) {
   //     console.log(err);
   //   }
   // };
+
+  const handleSubmit = async (e) => {
+    var formData = new FormData();
+
+    formData.append("title", title);
+    formData.append("username", currentUsername);
+    formData.append("lat", newPlace.lat);
+    formData.append("long", newPlace.long);
+    formData.append("desc", desc); // number 123456 is immediately converted to a string "123456"
+    formData.append("rating", star); // number 123456 is immediately converted to a string "123456"
+    formData.append("file", image); // number 123456 is immediately converted to a string "123456"
+
+    for (var value of formData.values()) {
+      console.log(value);
+    }
+
+    try {
+      const res = await axios.post("/pins/upload", formData);
+      setPins([...pins, res.data]);
+      setNewPlace(null);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     const getPins = async () => {
@@ -108,7 +115,7 @@ function App() {
         width="100%"
         height="100%"
         transitionDuration="200"
-        mapStyle="mapbox://styles/jarvis12345/ckuzmaehk0yms15mvrnmgx992"
+        mapStyle={REACT_MAP_URL}
         onViewportChange={(viewport) => setViewport(viewport)}
         onDblClick={currentUsername && handleAddClick}>
         {pins.map((p) => (
@@ -181,7 +188,7 @@ function App() {
               onClose={() => setNewPlace(null)}
               anchor="left">
               <div>
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <form encType="multipart/form-data">
                   <label>Title</label>
                   <input
                     placeholder="Enter a title"
@@ -191,17 +198,25 @@ function App() {
                   />
 
                   <label>Description</label>
-                  <textarea
-                    placeholder="Say us something about this place."
+                  <input
+                    placeholder="Enter a title"
+                    autoFocus
+                    name="title"
                     onChange={(e) => setDesc(e.target.value)}
-                    name="desc"
                   />
-                  <label>Add A Image Url Address</label>
+
+                  <label>Image</label>
+                  <input
+                    type="file"
+                    onChange={(e) => setImage(e.target.files[0])}
+                    name="file"
+                  />
+                  {/* <label>Add A Image Url Address</label>
                   <textarea
                     placeholder="Image Link"
                     onChange={(e) => setImage(e.target.value)}
                     name="desc"
-                  />
+                  /> */}
                   <label>Rating</label>
                   <select
                     onChange={(e) => setStar(e.target.value)}
@@ -212,7 +227,10 @@ function App() {
                     <option value="4">4</option>
                     <option value="5">5</option>
                   </select>
-                  <button type="submit" className="submitButton">
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="submitButton">
                     Add Pin
                   </button>
                 </form>
@@ -221,9 +239,11 @@ function App() {
           </>
         )}
         {currentUsername ? (
-          <button className="button logout" onClick={handleLogout}>
-            Log out
-          </button>
+          <>
+            <button className="button logout" onClick={handleLogout}>
+              Log out
+            </button>
+          </>
         ) : (
           <div className="buttons">
             <button className="button login" onClick={() => setShowLogin(true)}>
