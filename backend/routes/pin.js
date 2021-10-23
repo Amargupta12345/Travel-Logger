@@ -9,10 +9,7 @@ const storage = multer.diskStorage({
     cb(null, "./uploads/");
   },
   filename: function (req, file, cb) {
-    console.log(">>>>>>>>>>>>>>>>>>", file);
     exports.file = file.originalname;
-
-    // console.log("User Data file", file.originalname);
     cb(null, file.originalname);
   },
 });
@@ -21,55 +18,6 @@ const upload = multer({ storage: storage });
 
 router.post("/upload", upload.single("file"), service.upload);
 
-// router.post("/", async (req, res, next) => {
-//   const savedPin = new Pin(req.body);
-//   try {
-//     const newPin = await savedPin.save();
-//     res.status(200).json(newPin);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./uploads/");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, new Date().toISOString() + file.originalname);
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-
-// router.post(
-//   "/upload",
-//   upload.single("file"),
-
-//   async (req, res, next) => {
-//     console.log(req.file);
-//     //new user request body using mongo model from schema
-//     const newPin = new Pin({
-//       username: req.body.username,
-//       title: req.body.title,
-//       desc: req.body.desc,
-//       rating: req.body.rating,
-//       long: req.body.long,
-//       lat: req.body.lat,
-//       description: req.body.description,
-//       image: req.file.path,
-//     });
-
-//     try {
-//       const SavePin = await newPin.save();
-//       res.status(200).json(SavePin);
-//     } catch (err) {
-//       console.log(err);
-//       res.status(500).json(err);
-//     }
-//   }
-// );
-
 //get all pins
 router.get("/", async (req, res) => {
   try {
@@ -77,6 +25,38 @@ router.get("/", async (req, res) => {
     res.status(200).json(pins);
   } catch (err) {
     res.status(500).json(err);
+  }
+});
+
+router.patch("/update/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const update = req.body;
+  try {
+    const updatedPin = await Pin.findByIdAndUpdate(id, update);
+    res.json(updatedPin);
+  } catch (error) {
+    // check what type of error and send appropriate error message/status code etc.
+    error.status = 500;
+    next(error);
+  }
+});
+
+router.delete("/delete/:id", async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const removedPin = await Pin.findByIdAndRemove(id);
+
+    if (!removedPin) {
+      const error = new Error("Pin not found");
+      error.status = 404;
+      return next(error);
+    }
+
+    res.status(204).send({ message: "deleted succesfully" }); // 204 -> success but nothing sent in response body
+  } catch (error) {
+    error.status = 500;
+    next(error);
   }
 });
 

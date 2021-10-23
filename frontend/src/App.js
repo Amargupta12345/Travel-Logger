@@ -8,7 +8,6 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 
 import { REACT_APP_MAPBOX, REACT_MAP_URL } from "./constant";
-import Travel from "./components/Travel";
 
 function App() {
   const myStorage = window.localStorage;
@@ -23,8 +22,8 @@ function App() {
   const [image, setImage] = useState(null);
   const [star, setStar] = useState(0);
   const [viewport, setViewport] = useState({
-    latitude: 47.040182,
-    longitude: 17.071727,
+    latitude: 20.5937,
+    longitude: 78.9629,
     zoom: 4,
   });
   const [showRegister, setShowRegister] = useState(false);
@@ -43,28 +42,16 @@ function App() {
     });
   };
 
-  // data normal
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const newPin = {
-  //     username: currentUsername,
-  //     title,
-  //     desc,
-  //     rating: star,
-  //     lat: newPlace.lat,
-  //     long: newPlace.long,
-  //     image,
-  //   };
-
-  //   try {
-  //     const res = await axios.post("/pins", newPin);
-  //     setPins([...pins, res.data]);
-  //     setNewPlace(null);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+  const deletedata = async (id) => {
+    try {
+      console.log(id);
+      const res = await axios.delete(`/pins/delete/${id}`);
+      alert("Your log has to be delete");
+      window.location.reload(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleSubmit = async (e) => {
     var formData = new FormData();
@@ -160,6 +147,13 @@ function App() {
                     Created by <b>{p.username}</b>
                   </span>
                   <span className="date">{format(p.createdAt)}</span>
+                  {/* update button */}
+
+                  {/* delete  button */}
+
+                  <button className=" delete" onClick={() => deletedata(p._id)}>
+                    Delete Pin
+                  </button>
                 </div>
               </Popup>
             )}
