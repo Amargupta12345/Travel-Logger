@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const email = require("../helper/email");
+const token = require("../helper/token");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 
@@ -17,11 +19,50 @@ router.post("/register", async (req, res) => {
     });
 
     //save user and respond
-    const user = await newUser.save();
-    res.status(200).json(user);
+
+    // send email for verification
+    await token.getToken(
+      { email: req.body.email },
+      async function (err, token) {
+        console.log(token);
+        if (err) {
+          res.status(500).send({ message: "Error While Token Generation" });
+        } else {
+          let url = `${req.protocol}://${req.hostname}/user/verify/?token=${token}`;
+          if (req.hostname === "localhost") {
+            url = `http://localhost:8000/api/users/verify/?token=${token}`;
+          }
+          console.log(url);
+
+          const newemail = await email.sendVerificationMail(req.body, url);
+          await newUser.save();
+          console.log(newemail);
+          res.status(200).json({ message: "please verfiy the email" });
+        }
+      }
+    );
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
+  }
+});
+
+router.get("/verify", async (req, res, next) => {
+  try {
+    await token.verifyToken(req.query.token, async function (error, data) {
+      if (error) {
+        res.status(500).send();
+      } else {
+        let findQuery = { email: data.email };
+        let updateQuery = { $set: { verified: true } };
+        await User.findOneAndUpdate(findQuery, updateQuery);
+        res.status(200).json({
+          message: "user verified succesfylly now you can login ",
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 
@@ -29,7 +70,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     //find user
-    let query = { username: req.body.username };
+    let query = { email: req.body.email, verified: true };
     const user = await User.findOne(query);
 
     if (!user) {
@@ -46,9 +87,9 @@ router.post("/login", async (req, res) => {
     }
 
     //send response
-    res.status(200).json({ _id: user._id, username: user.username });
+    res.status(200).json({ _id: user._id, username: user.username , email : user.email });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json(err.message);
   }
 });
 

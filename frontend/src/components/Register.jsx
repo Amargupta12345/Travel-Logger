@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import "./register.css";
 
 export default function Register({ setShowRegister }) {
-
   // using useState in React
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -20,8 +19,11 @@ export default function Register({ setShowRegister }) {
       password: passwordRef.current.value,
     };
 
+    
+
     try {
       await axios.post("/users/register", newUser);
+      console.log(newUser);
       setError(false);
       setSuccess(true);
     } catch (err) {
@@ -29,8 +31,8 @@ export default function Register({ setShowRegister }) {
     }
   };
 
-  // component Rendering 
-  
+  // component Rendering
+
   return (
     <div className="registerContainer">
       <div className="logo">
@@ -50,7 +52,9 @@ export default function Register({ setShowRegister }) {
           Register
         </button>
         {success && (
-          <span className="success">Successfull. You can login now!</span>
+          <span className="success">
+            Please Verify The Email Is sent to your Inbox!
+          </span>
         )}
         {error && <span className="failure">Something went wrong!</span>}
       </form>

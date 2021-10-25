@@ -1,7 +1,7 @@
 import "./travellog.css";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import { useEffect, useState } from "react";
-import { Room, Star, StarBorder } from "@material-ui/icons";
+import { Room, Star } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
 import Register from "./Register";
@@ -14,6 +14,7 @@ function Travellogger() {
   const [currentUsername, setCurrentUsername] = useState(
     myStorage.getItem("user")
   );
+  const [currentEmail, setCurrentEmail] = useState(myStorage.getItem("emails"));
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
@@ -44,9 +45,8 @@ function Travellogger() {
 
   const deletedata = async (id) => {
     try {
-      console.log(id);
-      const res = await axios.delete(`/pins/delete/${id}`);
-      alert("Your log has to be delete");
+      await axios.delete(`/pins/delete/${id}`);
+      alert("Your Log has to be deleted SucessFully");
       window.location.reload(false);
     } catch (err) {
       console.log(err);
@@ -58,16 +58,13 @@ function Travellogger() {
 
     formData.append("title", title);
     formData.append("username", currentUsername);
+    formData.append("email", currentEmail);
     formData.append("lat", newPlace.lat);
     formData.append("long", newPlace.long);
     formData.append("desc", desc); // number 123456 is immediately converted to a string "123456"
     formData.append("rating", star); // number 123456 is immediately converted to a string "123456"
     formData.append("file", image); // number 123456 is immediately converted to a string "123456"
-
-    for (var value of formData.values()) {
-      console.log(value);
-    }
-
+    console.log(currentEmail);
     try {
       const res = await axios.post("/pins/upload", formData);
       setPins([...pins, res.data]);
@@ -92,6 +89,8 @@ function Travellogger() {
   const handleLogout = () => {
     setCurrentUsername(null);
     myStorage.removeItem("user");
+    setCurrentEmail(null);
+    myStorage.removeItem("emails");
   };
 
   return (
@@ -144,16 +143,23 @@ function Travellogger() {
                   </div>
                   <label>Information</label>
                   <span className="username">
-                    Created by <b>{p.username}</b>
+                    Created by :- <b>{p.username} </b>
+                  </span> 
+                  <span className="username">
+                    Email :- <b>{p.email} </b>
                   </span>
                   <span className="date">{format(p.createdAt)}</span>
-                  {/* update button */}
 
                   {/* delete  button */}
-
-                  <button className=" delete" onClick={() => deletedata(p._id)}>
-                    Delete Pin
-                  </button>
+                  {currentUsername ? (
+                    <button
+                      className=" delete"
+                      onClick={() => deletedata(p._id)}>
+                      Delete Pin
+                    </button>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </Popup>
             )}
@@ -205,12 +211,7 @@ function Travellogger() {
                     onChange={(e) => setImage(e.target.files[0])}
                     name="file"
                   />
-                  {/* <label>Add A Image Url Address</label>
-                  <textarea
-                    placeholder="Image Link"
-                    onChange={(e) => setImage(e.target.value)}
-                    name="desc"
-                  /> */}
+
                   <label>Rating</label>
                   <select
                     onChange={(e) => setStar(e.target.value)}
@@ -255,6 +256,7 @@ function Travellogger() {
           <Login
             setShowLogin={setShowLogin}
             setCurrentUsername={setCurrentUsername}
+            setCurrentEmail={setCurrentEmail}
             myStorage={myStorage}
           />
         )}

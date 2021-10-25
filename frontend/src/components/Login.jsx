@@ -3,23 +3,35 @@ import axios from "axios";
 import { useRef, useState } from "react";
 import "./login.css";
 
-export default function Login({ setShowLogin, setCurrentUsername, myStorage }) {
+export default function Login({
+  setShowLogin,
+  setCurrentUsername,
+  myStorage,
+  setCurrentEmail,
+}) {
   // using useState hooks of React
 
   const [error, setError] = useState(false);
-  const usernameRef = useRef();
+  const emailRef = useRef();
   const passwordRef = useRef();
+  const usernameRef = useRef();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = {
-      username: usernameRef.current.value,
+      email: emailRef.current.value,
       password: passwordRef.current.value,
+      username: usernameRef.current.value,
     };
+    console.log(user);
     try {
       const res = await axios.post("/users/login", user);
       setCurrentUsername(res.data.username);
       myStorage.setItem("user", res.data.username);
+      setCurrentEmail(res.data.email);
+      myStorage.setItem("emails", res.data.email);
+      console.log(res.data.email);
+
       setShowLogin(false);
     } catch (err) {
       setError(true);
@@ -35,6 +47,7 @@ export default function Login({ setShowLogin, setCurrentUsername, myStorage }) {
         <span>Travel Logger</span>
       </div>
       <form onSubmit={handleSubmit}>
+        <input autoFocus placeholder="email" ref={emailRef} />
         <input autoFocus placeholder="username" ref={usernameRef} />
         <input
           type="password"
@@ -45,7 +58,11 @@ export default function Login({ setShowLogin, setCurrentUsername, myStorage }) {
         <button className="loginBtn" type="submit">
           Login
         </button>
-        {error && <span className="failure">Something went wrong!</span>}
+        {error && (
+          <span className="failure">
+            Something went wrong! or Please Verfiy the email
+          </span>
+        )}
       </form>
       <Cancel className="loginCancel" onClick={() => setShowLogin(false)} />
     </div>
