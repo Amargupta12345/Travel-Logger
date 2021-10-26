@@ -25,3 +25,5 @@ yarn-error.log*
 #credentials
 
 /src/constant.js
+
+.env

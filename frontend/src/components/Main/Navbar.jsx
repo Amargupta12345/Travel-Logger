@@ -24,6 +24,9 @@ const NavBar = () => {
         <NavLink className={classes.tabs} to="travel" exact>
           Travel Advisor
         </NavLink>
+        <NavLink className={classes.tabs} to="location" exact>
+          Weather 
+        </NavLink>
       </Toolbar>
     </AppBar>
   );

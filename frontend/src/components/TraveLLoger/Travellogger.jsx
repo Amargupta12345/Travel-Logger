@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { Room, Star } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
-import Register from "./Register";
-import Login from "./Login";
+import Register from "../Register/Register";
+import Login from "../Login/Login";
+import NavBar from "../Main/Navbar";
 
-import { REACT_APP_MAPBOX, REACT_MAP_URL } from "../constant";
+import { REACT_APP_MAPBOX, REACT_MAP_URL } from "../../constant";
 
 function Travellogger() {
   const myStorage = window.localStorage;
@@ -61,9 +62,9 @@ function Travellogger() {
     formData.append("email", currentEmail);
     formData.append("lat", newPlace.lat);
     formData.append("long", newPlace.long);
-    formData.append("desc", desc); // number 123456 is immediately converted to a string "123456"
-    formData.append("rating", star); // number 123456 is immediately converted to a string "123456"
-    formData.append("file", image); // number 123456 is immediately converted to a string "123456"
+    formData.append("desc", desc); 
+    formData.append("rating", star);
+    formData.append("file", image);
     console.log(currentEmail);
     try {
       const res = await axios.post("/pins/upload", formData);
@@ -95,6 +96,7 @@ function Travellogger() {
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>
+      <NavBar />
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={REACT_APP_MAPBOX}
@@ -115,7 +117,7 @@ function Travellogger() {
                 style={{
                   fontSize: 7 * viewport.zoom,
                   color:
-                    currentUsername === p.username ? "tomato" : "slateblue",
+                    currentEmail === p.email ? "tomato" : "slateblue",
                   cursor: "pointer",
                 }}
                 onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
@@ -144,7 +146,7 @@ function Travellogger() {
                   <label>Information</label>
                   <span className="username">
                     Created by :- <b>{p.username} </b>
-                  </span> 
+                  </span>
                   <span className="username">
                     Email :- <b>{p.email} </b>
                   </span>

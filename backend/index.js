@@ -28,10 +28,13 @@ mongoose
     console.log(err.message);
   });
 
+//api creation if an endpoint  
+
 app.use("/api/pins", pinRouter);
 
 app.use("/api/users", userRouter);
 
+// Creating a middlewares
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 

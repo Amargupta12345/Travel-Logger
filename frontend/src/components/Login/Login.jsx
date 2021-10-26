@@ -21,7 +21,7 @@ export default function Login({
     const user = {
       email: emailRef.current.value,
       password: passwordRef.current.value,
-      username: usernameRef.current.value,
+    
     };
     console.log(user);
     try {
@@ -48,7 +48,7 @@ export default function Login({
       </div>
       <form onSubmit={handleSubmit}>
         <input autoFocus placeholder="email" ref={emailRef} />
-        <input autoFocus placeholder="username" ref={usernameRef} />
+
         <input
           type="password"
           min="6"

@@ -7,8 +7,8 @@ exports.sendVerificationMail = function (userData, url) {
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: "amarg4812@gmail.com", // generated ethereal user
-        pass: "helloworldprogrammer612@gmail.com", // generated ethereal password
+        user: process.env.USER_NAME, // generated ethereal user
+        pass: process.env.PASSWORD, // generated ethereal password
       },
     });
 
@@ -17,7 +17,7 @@ exports.sendVerificationMail = function (userData, url) {
         from: "No Reply ",
         to: userData.email,
         subject: "Registration Succesfull",
-        html: `<h3>Welcome ${userData.name}.</h3> <p>Please verify your account by clicking on the link <a href=${url}>verify</a></p>`,
+        html: `<h3>Welcome ${userData.username}.</h3> <p>Please verify your account by clicking on the link <a href=${url}>verify</a></p>`,
       },
       function (err, info) {
         // console.log(err, info);
