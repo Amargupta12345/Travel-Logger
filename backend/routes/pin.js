@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const service = require("../controllers/Pin-Controller");
+const token = require("../helper/token");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -15,12 +16,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/upload", upload.single("file"), service.upload);
+router.post("/upload", token.isloggedIn, upload.single("file"), service.upload);
 
 //get all pins
-router.get("/", service.Details);
+router.get("/", token.isloggedIn, service.Details);
 
-router.patch("/update/:id", service.Update);
+router.patch("/update/:id", token.isloggedIn, service.Update);
 
 router.delete("/delete/:id", service.Delete);
 

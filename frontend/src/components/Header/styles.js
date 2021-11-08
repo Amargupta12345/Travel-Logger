@@ -15,6 +15,9 @@ export default makeStyles((theme) => ({
     marginRight: 20,
     textDecoration: "none",
     fontSize: 20,
+    "&:hover": {
+      color: "yellow",
+    },
   },
 
   toolbar: {

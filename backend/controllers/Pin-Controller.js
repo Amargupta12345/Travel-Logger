@@ -3,7 +3,6 @@ const ind = require("../routes/pin");
 const Pin = require("../models/pin");
 
 exports.upload = function (req, res) {
-  console.log("hello world");
   cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,

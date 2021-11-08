@@ -16,15 +16,32 @@
     <style>
       * {
         font-family: "Lato", sans-serif;
-        margin : 0; 
+        margin: 0;
       }
     </style>
 
     <title>Tarvel Logger</title>
-     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAA8KMSH5IrzaVgu97S-brl3X6fcTKvIws"></script>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAA8KMSH5IrzaVgu97S-brl3X6fcTKvIws"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      mapboxgl.accessToken =
+      "pk.eyJ1IjoiamFydmlzMTIzNDUiLCJhIjoiY2t1emZpNzk4MDQyYjJvcGEyN29xcW16aSJ9.DQxiEQCBDH7x4LIPe1vCDA";
+      const map = new mapboxgl.Map({
+        container: "map", // container ID
+        style: "mapbox://styles/mapbox/streets-v11", // style URL
+        center: [-74.5, 40], // starting position [lng, lat]
+        zoom: 9, // starting zoom
+      });
+    </script>
   </body>
 </html>

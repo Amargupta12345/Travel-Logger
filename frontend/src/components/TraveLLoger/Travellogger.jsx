@@ -7,7 +7,6 @@ import { format } from "timeago.js";
 import Register from "../Register/Register";
 import Login from "../Login/Login";
 import NavBar from "../Main/Navbar";
-
 import { REACT_APP_MAPBOX, REACT_MAP_URL } from "../../constant";
 
 function Travellogger() {
@@ -46,7 +45,9 @@ function Travellogger() {
 
   const deletedata = async (id) => {
     try {
-      await axios.delete(`/pins/delete/${id}`);
+      await axios.delete(
+        `https://travellogerapi.herokuapp.com/api/pins/delete/${id}`
+      );
       alert("Your Log has to be deleted SucessFully");
       window.location.reload(false);
     } catch (err) {
@@ -62,12 +63,22 @@ function Travellogger() {
     formData.append("email", currentEmail);
     formData.append("lat", newPlace.lat);
     formData.append("long", newPlace.long);
-    formData.append("desc", desc); 
+    formData.append("desc", desc);
     formData.append("rating", star);
     formData.append("file", image);
-    console.log(currentEmail);
+
     try {
-      const res = await axios.post("/pins/upload", formData);
+      let token = myStorage.getItem("token");
+
+      const res = await axios.post(
+        "https://travellogerapi.herokuapp.com/api/pins/upload",
+        formData,
+        {
+          headers: {
+            Auth: token,
+          },
+        }
+      );
       setPins([...pins, res.data]);
       setNewPlace(null);
     } catch (err) {
@@ -78,7 +89,9 @@ function Travellogger() {
   useEffect(() => {
     const getPins = async () => {
       try {
-        const allPins = await axios.get("/pins");
+        const allPins = await axios.get(
+          "https://travellogerapi.herokuapp.com/api/pins"
+        );
         setPins(allPins.data);
       } catch (err) {
         console.log(err);
@@ -92,6 +105,7 @@ function Travellogger() {
     myStorage.removeItem("user");
     setCurrentEmail(null);
     myStorage.removeItem("emails");
+    myStorage.removeItem("token");
   };
 
   return (
@@ -116,8 +130,7 @@ function Travellogger() {
               <Room
                 style={{
                   fontSize: 7 * viewport.zoom,
-                  color:
-                    currentEmail === p.email ? "tomato" : "slateblue",
+                  color: currentEmail === p.email ? "tomato" : "slateblue",
                   cursor: "pointer",
                 }}
                 onClick={() => handleMarkerClick(p._id, p.lat, p.long)}

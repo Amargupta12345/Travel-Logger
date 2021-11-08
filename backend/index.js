@@ -9,10 +9,10 @@ const cors = require("cors");
 const app = express();
 
 app.use(express.json());
-app.use(express.static(__dirname +"./uploads/"));
+app.use(express.static(__dirname + "./uploads/"));
 app.use(cors());
 
-const PORT = 8000;
+const PORT = process.env.PORT ||  8000;
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ mongoose
     console.log(err.message);
   });
 
-//api creation if an endpoint  
+//api creation if an endpoint
 
 app.use("/api/pins", pinRouter);
 

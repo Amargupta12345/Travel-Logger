@@ -14,7 +14,7 @@ export default function Login({
   const [error, setError] = useState(false);
   const emailRef = useRef();
   const passwordRef = useRef();
-  const usernameRef = useRef();
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,12 +25,17 @@ export default function Login({
     };
     console.log(user);
     try {
-      const res = await axios.post("/users/login", user);
+      const res = await axios.post(
+        "https://travellogerapi.herokuapp.com/api/users/login",
+        user
+      );
       setCurrentUsername(res.data.username);
       myStorage.setItem("user", res.data.username);
       setCurrentEmail(res.data.email);
       myStorage.setItem("emails", res.data.email);
-      console.log(res.data.email);
+      myStorage.setItem("token", res.data.token);
+
+      console.log(res.data.token);
 
       setShowLogin(false);
     } catch (err) {

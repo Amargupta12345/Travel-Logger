@@ -1,7 +1,6 @@
 const User = require("../models/user");
 const email = require("../helper/email");
 const token = require("../helper/token");
-const router = require("express").Router();
 const bcrypt = require("bcrypt");
 
 exports.Register = async (req, res) => {
@@ -23,29 +22,30 @@ exports.Register = async (req, res) => {
     await token.getToken(
       { email: req.body.email },
       async function (err, token) {
-        console.log(token);
         if (err) {
           res.status(500).send({ message: "Error While Token Generation" });
         } else {
-          let url = `${req.protocol}://${req.hostname}/user/verify/?token=${token}`;
+          let url = `${req.protocol}://${req.hostname}/api/users/verify/?token=${token}`;
           if (req.hostname === "localhost") {
             url = `http://localhost:8000/api/users/verify/?token=${token}`;
           }
-          console.log(url);
 
-          const newemail = await email.sendVerificationMail(req.body, url);
-          await newUser.save();
-          console.log(newemail);
-          res.status(200).json({ message: "please verfiy the email" });
+          await email
+            .sendVerificationMail(req.body, url)
+            .then(async (result) => {
+              await newUser.save();
+              res.status(200).json({ message: "please verfiy the email" });
+            })
+            .catch((err) => {
+              res.status(200).json({ message: "error" });
+            });
         }
       }
     );
   } catch (err) {
-    console.log(err);
     res.status(500).json(err);
   }
 };
-
 
 exports.Verify = async (req, res, next) => {
   try {
@@ -85,10 +85,22 @@ exports.Login = async (req, res) => {
       res.status(400).json("Wrong username or password");
     }
 
+    let payload = {
+      email: req.body.email,
+    };
+    await token.getToken(payload, function (error, token) {
+      if (error) {
+        res.status(500).send({ message: "Internal Server Error" });
+      } else {
+        res.status(200).json({
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          token: token,
+        });
+      }
+    });
     //send response
-    res
-      .status(200)
-      .json({ _id: user._id, username: user.username, email: user.email });
   } catch (err) {
     res.status(500).json(err.message);
   }

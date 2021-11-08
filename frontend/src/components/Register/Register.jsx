@@ -22,7 +22,10 @@ export default function Register({ setShowRegister }) {
     
 
     try {
-      await axios.post("/users/register", newUser);
+      await axios.post(
+        "https://travellogerapi.herokuapp.com/api/users/register",
+        newUser
+      );
       console.log(newUser);
       setError(false);
       setSuccess(true);
